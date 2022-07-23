@@ -88,6 +88,7 @@ public class Controller implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
 
+    // ----------- INSTANCIAS ----------- // 
     EventHandler<MouseEvent> pressionar = (e) -> {
       Stage primaryStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
       xOffset = primaryStage.getX() - e.getScreenX();
@@ -98,14 +99,7 @@ public class Controller implements Initializable {
       primaryStage.setX(e.getScreenX() + xOffset);
       primaryStage.setY(e.getScreenY() + yOffset);
     };
-
-    imgCel.setOnMousePressed(pressionar);
-    imgCel.setOnMouseDragged(soltar);
-    btnArrastar.setOnMousePressed(pressionar);
-    btnArrastar.setOnMouseDragged(soltar);
-
-    // RELOGIO //
-    new Thread(() -> {
+    Runnable relogio = () -> {
       while (true) {
         Formatter format = new Formatter();
         Calendar gfg_calender = Calendar.getInstance();
@@ -120,27 +114,33 @@ public class Controller implements Initializable {
           throw new RuntimeException(e);
         }
       }
-    }).start();
-
-    // CARREGAMENTO DO INICIO //
-    new Thread(() -> {
+    };
+    Runnable pistao = () -> {
       try {
-        while (pbMOS.getProgress() < 0.5f) {
-          sleep(50);
-          pbMOS.setProgress(pbMOS.getProgress() + 0.01);
-        }
-        sleep(1000);
-        pbMOS.setProgress(0.80);
-        while (pbMOS.getProgress() < 1f) {
-          sleep(100);
-          pbMOS.setProgress(pbMOS.getProgress() + 0.01);
-        }
-        tabPaneOS.getSelectionModel().select(1);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
+      while (pbMOS.getProgress() < 0.5f) {
+        sleep(50);
+        pbMOS.setProgress(pbMOS.getProgress() + 0.01);
       }
-    }).start();
-
+      sleep(1000);
+      pbMOS.setProgress(0.80);
+      while (pbMOS.getProgress() < 1f) {
+        sleep(100);
+        pbMOS.setProgress(pbMOS.getProgress() + 0.01);
+      }
+      tabPaneOS.getSelectionModel().select(1);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  };
+    
+    // ----------- ATOS ----------- //
+    imgCel.setOnMousePressed(pressionar);
+    imgCel.setOnMouseDragged(soltar);
+    btnArrastar.setOnMousePressed(pressionar);
+    btnArrastar.setOnMouseDragged(soltar);
+    
+    new Thread(relogio).start();
+    new Thread(pistao).start();
   }
 
   /**
