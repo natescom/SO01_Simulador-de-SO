@@ -24,6 +24,7 @@ public class Principal extends Application {
 
   @Override
   public void start(Stage stage) throws Exception {
+    new Controller();
     Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
     stage.setTitle("Marl OS Mobile");
     Scene scene = new Scene(root);
